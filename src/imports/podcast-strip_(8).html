@@ -1,0 +1,397 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+  .ps-wrap {
+    background: #0d1117;
+    padding: 36px 28px;
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+  .ps-wrap * { box-sizing: border-box; }
+  .ps-section-title {
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+  .ps-episodes { display: flex; flex-direction: column; }
+  .ps-episode { border-top: 1px solid rgba(255,255,255,0.07); }
+  .ps-episode:last-child { border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .ps-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px 12px 6px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .ps-row:hover { background: rgba(255,255,255,0.03); }
+  .ps-thumb {
+    width: 112px;
+    height: 112px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .ps-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .ps-content { flex: 1; min-width: 0; padding-top: 2px; }
+  .ps-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ps-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4f9cf9;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .ps-dot.vsl { background: #f97316; }
+  .ps-title {
+    color: #f0f4ff;
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.2px;
+    line-height: 1.3;
+  }
+  .ps-episode.vsl-ep .ps-title { color: #fdba74; }
+  .ps-desc {
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    margin: 0 0 8px 16px;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .ps-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 16px;
+  }
+  .ps-seg { color: rgba(255,255,255,0.3); font-size: 12px; }
+  .ps-sep { color: rgba(255,255,255,0.2); font-size: 12px; }
+  .ps-dur { color: #ffffff; font-size: 12px; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .ps-wrap { padding: 20px 16px; }
+    .ps-row {
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 8px 6px;
+    }
+    .ps-thumb {
+      width: 100%;
+      height: 180px;
+    }
+    .ps-content { padding-top: 0; }
+    .ps-desc { -webkit-line-clamp: 3; }
+    .ps-actions { padding: 4px 8px 16px; }
+  }
+  .ps-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 12px 18px;
+  }
+  .ps-add-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.18);
+    background: transparent !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.15s;
+    flex-shrink: 0;
+    box-shadow: none !important;
+    outline: none;
+  }
+  .ps-add-btn:hover { border-color: rgba(255,255,255,0.45); }
+  .ps-play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255,255,255,0.5) !important;
+    background: transparent !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    box-shadow: none !important;
+    outline: none;
+  }
+  .ps-play-btn:hover {
+    border-color: rgba(255,255,255,0.9) !important;
+    background: rgba(255,255,255,0.07) !important;
+  }
+  .ps-episode.vsl-ep .ps-play-btn { border-color: rgba(249,115,22,0.6) !important; }
+  .ps-episode.vsl-ep .ps-play-btn:hover { border-color: #f97316 !important; background: rgba(249,115,22,0.1) !important; }
+  .ps-vsl-badge {
+    background: rgba(249,115,22,0.14);
+    color: #fb923c;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .ps-player-wrap { display: none; padding: 0 12px 20px; }
+  .ps-player-wrap.open { display: block; animation: sd 0.2s ease; }
+  @keyframes sd {
+    from { opacity:0; transform:translateY(-4px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .ps-player-inner {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #111;
+    position: relative;
+    padding-top: 56.25%;
+  }
+  .ps-player-inner > div {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    padding-top: 0 !important;
+  }
+  .ps-no-vid {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.25);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+</style>
+
+<div class="ps-wrap">
+  <div class="ps-episodes" id="ps-list"></div>
+</div>
+
+<script>
+var BASE = 'https://denieuwemarketingmanager.nl/wp-content/uploads/2026/04/';
+var THUMB = BASE + 'Frame-26.png';
+var LI = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+var episodes = [
+  { n:1,  thumb: BASE+'welkegolfkijkjij.png',
+    t:'Je kijkt naar de verkeerde golf',
+    d:'We beoordelen AI op basis van ons gebruik van ChatGPT en Claude. Precies daardoor missen de meeste ondernemers wat er echt gaande is.',
+    seg:'0:00 – 1:20', dur:'1 min 20 sec',
+    vid: { type:'v1', id:'vidalytics_embed_WfFBh3WYCdUyrHq3', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/WfFBh3WYCdUyrHq3/' } },
+
+  { n:2,  thumb: BASE+'NLlooptachter.png',
+    t:'Nederland loopt achter — en jij misschien ook',
+    d:'CBS-onderzoek toont aan: de kloof met de VS groeit. De vraag is niet óf AI jouw bedrijf verandert, maar of jij het stuur nog vasthebt.',
+    seg:'1:20 – 2:04', dur:'44 sec',
+    vid: { type:'v1', id:'vidalytics_embed_bHBg632ZNJLG8f8_', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/bHBg632ZNJLG8f8_/' } },
+
+  { n:3,  thumb: 'https://denieuwemarketingmanager.nl/wp-content/uploads/2026/04/Christiaan.png',
+    t:'Over mij. Waarom doe ik dit',
+    d:'Ik ben geen bureau, businesscoach of influencer. Wel iemand die zo\'n 50 bedrijven met een marketingteam van binnen zag en hen hielp professionaliseren.', seg:'2:37 – 3:12', dur:'35 sec',
+    vid: { type:'v1', id:'vidalytics_embed_rqSnad3DGMClTFDo', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/rqSnad3DGMClTFDo/' } },
+
+  { n:4,  thumb: BASE+'snelheidiskey.png',
+    t:'Wie achterblijft, komt niet meer bij',
+    d:'Bedrijven die AI gebruiken, groeien 27% sneller. De rest raakt steeds verder achterop. Loop je de achterstand nog in?', seg:'3:12 – 3:37', dur:'25 sec',
+    vid: { type:'v1', id:'vidalytics_embed_470VdKUXSirVhjuG', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/470VdKUXSirVhjuG/' } },
+
+  { n:5,  thumb: BASE+'klaarvoordeorkaan.png',
+    t:'77% staat stil. Terwijl de orkaan nadert',
+    d:'Drie op de vier ondernemers is niet voorbereid. Dat is geen statistiek om gerust van te worden — het is een open deur voor wie wél klaarstaat.',
+    seg:'3:37 – 4:23', dur:'46 sec',
+    vid: { type:'v1', id:'vidalytics_embed_hqmYb6Aqwu18hqFj', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/hqmYb6Aqwu18hqFj/' } },
+
+  { n:6,  thumb: BASE+'topgunrealiteit.png',
+    t:'De TopGun realiteit',
+    d:'Veel ondernemers denken dat het zo\'n vaart niet loopt. Maar dit is geen film. Afwachten heeft een prijs.', seg:'4:25 – 5:11', dur:'46 sec',
+    vid: { type:'v1', id:'vidalytics_embed_yvssiCieHqzBb4nj', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/yvssiCieHqzBb4nj/' } },
+
+  { n:7,  thumb: BASE+'huidigemodeldood.png',
+    t:'De doodlopende weg van je huidige model',
+    d:'Een kijkje in de toekomst. Waar gaan we de komende 2 jaar naartoe? En hoe kun je mee op die trein?',
+    seg:'5:14 – 6:04', dur:'50 sec',
+    vid: { type:'v1', id:'vidalytics_embed_wxJ7BU1pjyRNpsTu', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/wxJ7BU1pjyRNpsTu/' } },
+
+  { n:8,  thumb: BASE+'nooitmeerwachten.png',
+    t:'Nooit meer wachten op je team',
+    d:'Doorlooptijden van marketing zijn nu soms dagen of weken. Dat gaat terug naar 20 minuten. Met factor 10 meer output.',
+    seg:'0:00 – 0:41', dur:'41 sec',
+    vid: { type:'v1', id:'vidalytics_embed_xJL2cou8f51VjZ95', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/xJL2cou8f51VjZ95/' } },
+
+  { n:9,  thumb: BASE+'stopbureautheater.png',
+    t:'Weg met het bureau(theater)',
+    d:'Afstemmen, onderhandelen, plasjes, doorlooptijden. In de nieuwe wereld ben je zelf in de lead — sneller live en goedkoper dan ooit.',
+    seg:'5:14 – 6:35', dur:'1 min 21 sec',
+    vid: { type:'v1', id:'vidalytics_embed_A_9EKbQH4bONk3QL', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/A_9EKbQH4bONk3QL/' } },
+
+  { n:10, thumb: BASE+'snelreageren.png',
+    t:'10x sneller reageren',
+    d:'Doorlooptijden van marketing zijn nu soms dagen of weken. Dat gaat terug naar 20 minuten. Met factor 10 meer output.', seg:'0:00 – 0:36', dur:'36 sec',
+    vid: { type:'v1', id:'vidalytics_embed_1Cep5BL7r5Z1a_fU', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/1Cep5BL7r5Z1a_fU/' } },
+
+  { n:11, thumb: BASE+'andere-normen.png',
+    t:'Hetzelfde werk. Radicaal andere vormen en normen.',
+    d:'Nieuwe manieren van werken en van schalen. Want de kennis zit straks niet meer in de hoofden van je mensen of bij bureaus, maar in jouw systemen.', seg:'0:00 – 0:31', dur:'31 sec',
+    vid: { type:'v1', id:'vidalytics_embed_BayVCsxVymIIv4JH', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/BayVCsxVymIIv4JH/' } },
+
+  { n:12, thumb: BASE+'anderetijden.png',
+    t:'Dit gebeurde eerder. En zo liep het af.',
+    d:'We zagen dit eerder. In de finance. Daar gingen we in 10 jaar tijd ook 10x productiever werken. Marketing gebeurt dat ook. Maar dan in 2 jaar.', seg:'0:00 – 0:45', dur:'~45 sec',
+    vid: { type:'v1', id:'vidalytics_embed_uzerBHTeo19OqDC8', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/uzerBHTeo19OqDC8/' } },
+
+  { n:13, thumb: BASE+'agentic.png',
+    t:'Je stuurt straks geen mensen meer aan',
+    d:'Maar agents. Agents worden een steeds groter onderdeel van de marketingcapability van elk bedrijf.',
+    seg:'0:00 – 0:16', dur:'16 sec',
+    vid: { type:'v1', id:'vidalytics_embed_mupZU_nAAXuNjM94', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/mupZU_nAAXuNjM94/' } },
+
+  { n:14, thumb: BASE+'aanpak.png',
+    t:'Hoe pak je dat aan? (als je slim bent)',
+    d:'Je kunt in een paar weken de basis leggen om deze golf te surfen. 4 must-haves. 3 fases. En dan gewoon beginnen.', seg:'0:00 – 0:40', dur:'40 sec',
+    vid: { type:'v1', id:'vidalytics_embed_d75DbG1ueL7RmNVX', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/d75DbG1ueL7RmNVX/' } },
+
+  { n:15, thumb: BASE+'watwordtjeroadmap.png',
+    t:'Zo blijf je de komende 2 jaar aan de bal',
+    d:'De accenten verschuiven. Verlies van focus, tijd en geld door afstemming behoort tot het verleden. Jij stuurt beter dan ooit. Met een fractie van de kosten.',
+    seg:'7:14 – einde', dur:'~1 min',
+    vsl: true,
+    vid: { type:'v2', id:'7QCNATUiuB_ouasF', url:'https://fast.vidalytics.com/embeds/Hvfz3QGH/7QCNATUiuB_ouasF/player.settings.json' } }
+];
+
+var loadedSlots = {};
+
+function buildList() {
+  var list = document.getElementById('ps-list');
+  episodes.forEach(function(ep) {
+    var isVsl = !!ep.vsl;
+    var el = document.createElement('div');
+    el.className = 'ps-episode' + (isVsl ? ' vsl-ep' : '');
+    el.id = 'ep' + ep.n;
+
+    var dotCls   = isVsl ? 'ps-dot vsl' : 'ps-dot';
+    var playFill = isVsl ? '#f97316' : 'rgba(255,255,255,0.85)';
+    var badge    = isVsl ? '<span class="ps-vsl-badge">Bonus</span>' : '';
+
+    el.innerHTML =
+      '<div class="ps-row" onclick="togglePlayer(' + ep.n + ')">'
+      + '<div class="ps-thumb"><img src="' + ep.thumb + '" alt="" loading="lazy"/></div>'
+      + '<div class="ps-content">'
+      +   '<div class="ps-title-row">'
+      +     '<span class="' + dotCls + '"></span>'
+      +     '<p class="ps-title">' + ep.t + '</p>'
+      +     badge
+      +   '</div>'
+      +   '<p class="ps-desc">' + ep.d + '</p>'
+      +   '<div class="ps-meta-row">'
+      +     '<span class="ps-seg">' + ep.seg + '</span>'
+      +     '<span class="ps-sep">•</span>'
+      +     '<span class="ps-dur">' + ep.dur + '</span>'
+      +   '</div>'
+      + '</div>'
+      + '</div>'
+      + '<div class="ps-actions">'
+      +   '<div class="ps-add-btn" id="addbtn-' + ep.n + '" onclick="togglePlayer(' + ep.n + ')">'
+      +     '<svg id="addicon-' + ep.n + '" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      +       '<line x1="7" y1="1" x2="7" y2="13" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>'
+      +       '<line x1="1" y1="7" x2="13" y2="7" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>'
+      +     '</svg>'
+      +   '</div>'
+      +   '<div class="ps-play-btn" onclick="event.stopPropagation();togglePlayer(' + ep.n + ')">'
+      +     '<svg width="13" height="15" viewBox="0 0 13 15" fill="none" xmlns="http://www.w3.org/2000/svg">'
+      +       '<path d="M1.5 1.5L11.5 7.5L1.5 13.5V1.5Z" fill="' + playFill + '" stroke="' + playFill + '" stroke-width="1" stroke-linejoin="round"/>'
+      +     '</svg>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="ps-player-wrap" id="ep' + ep.n + '-player">'
+      +   '<div class="ps-player-inner">'
+      +     '<div id="vid-slot-' + ep.n + '" style="width:100%;position:relative;padding-top:56.25%;"></div>'
+      +   '</div>'
+      + '</div>';
+
+    list.appendChild(el);
+  });
+}
+
+function setIcon(num, isOpen) {
+  var icon = document.getElementById('addicon-' + num);
+  if (!icon) return;
+  icon.innerHTML = isOpen
+    ? '<line x1="1" y1="7" x2="13" y2="7" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"/>'
+    : '<line x1="7" y1="1" x2="7" y2="13" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="7" x2="13" y2="7" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round"/>';
+}
+
+function loadVid(num, ep) {
+  if (loadedSlots[num]) return;
+  loadedSlots[num] = true;
+  var slot = document.getElementById('vid-slot-' + num);
+  if (!slot) return;
+  slot.id = ep.vid.id;
+  var vidId = ep.vid.id, vidUrl = ep.vid.url;
+  if (ep.vid.type === 'v2') {
+    (function(v,i,d,a,l,y,t,c,s){
+      y='_'+d.toLowerCase();if(!v[y]){v[y]={};}if(!v[y].embeds){v[y].embeds={};}
+      t=function(){if(v[d]&&v[d].Embed){var ve=v[d].Embed;c=new ve();c.run(a);c.loadCss();}else{setTimeout(t,1000);}};
+      s=new XMLHttpRequest();s.open('GET',l+'?ac='+(new Date()).getTime(),true);
+      s.onreadystatechange=function(){if(s.readyState==4){if(s.status==200||s.status==304){var sd=JSON.parse(s.responseText);v[y].embeds[a]={type:'video',options:sd};t();}}};
+      s.send();
+    })(window,document,'Vidalytics',vidId,vidUrl);
+  } else {
+    (function(v,i,d,a,l,y,t,c,s){
+      y='_'+d.toLowerCase();c=d+'L';
+      if(!v[d]){v[d]={};}if(!v[c]){v[c]={};}if(!v[y]){v[y]={};}
+      var vl='Loader',vli=v[y][vl],vsl=v[c][vl+'Script'],vlf=v[c][vl+'Loaded'],ve='Embed';
+      if(!vsl){vsl=function(u,cb){
+        if(t){cb();return;}s=i.createElement('script');s.type='text/javascript';s.async=1;s.src=u;
+        if(s.readyState){s.onreadystatechange=function(){if(s.readyState==="loaded"||s.readyState=="complete"){s.onreadystatechange=null;vlf=1;cb();}};}
+        else{s.onload=function(){vlf=1;cb();};}
+        i.getElementsByTagName('head')[0].appendChild(s);
+      };}
+      vsl(l+'loader.min.js',function(){if(!vli){var vlc=v[c][vl];vli=new vlc();}vli.loadScript(l+'player.min.js',function(){var vec=v[d][ve];t=new vec();t.run(a);});});
+    })(window,document,'Vidalytics',vidId,vidUrl);
+  }
+}
+
+function togglePlayer(num) {
+  var target = document.getElementById('ep' + num + '-player');
+  var isOpen = target.classList.contains('open');
+  document.querySelectorAll('.ps-player-wrap').forEach(function(p){ p.classList.remove('open'); });
+  episodes.forEach(function(e){ setIcon(e.n, false); });
+  if (!isOpen) {
+    target.classList.add('open');
+    setIcon(num, true);
+    var ep = episodes.find(function(e){ return e.n === num; });
+    if (ep && ep.vid) loadVid(num, ep);
+  }
+}
+
+buildList();
+</script>
