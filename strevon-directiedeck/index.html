@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Strevon — B2B Kwartaalplan Q4 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Fraunces:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2A44;
+    --navy-2:#163E63;
+    --ink:#1A1D24;
+    --paper:#F6F3EC;
+    --paper-2:#FFFFFF;
+    --line:#E3DFD3;
+    --muted:#66605A;
+    --accent:#E06A2C;
+    --accent-2:#F2A65A;
+    --ok:#1E8E5A;
+    --ok-bg:#E7F3EC;
+    --dev:#B9840F;
+    --dev-bg:#FBF1DA;
+    --miss:#C23B3B;
+    --miss-bg:#FBEAE8;
+    --shadow: 0 1px 2px rgba(15,42,68,.05), 0 8px 24px -12px rgba(15,42,68,.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:#20242c;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .slide{
+    width:1280px;height:720px;
+    flex-shrink:0;
+    background:var(--paper);
+    position:relative;
+    display:none;
+    flex-direction:column;
+    padding:64px 88px 56px;
+    overflow:hidden;
+  }
+  .slide.active{display:flex;}
+  .slide--dark{background:linear-gradient(155deg,var(--navy) 0%,#0A1D30 100%);color:#fff;}
+  .slide--dark .muted{color:rgba(255,255,255,.62);}
+
+  /* type */
+  .kicker{
+    font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 14px;
+  }
+  .slide--dark .kicker{color:var(--accent-2);}
+  h1.title{font-size:40px;line-height:1.12;font-weight:800;margin:0 0 8px;color:var(--navy);letter-spacing:-.01em;}
+  .slide--dark h1.title{color:#fff;}
+  h2.sub{font-size:17px;font-weight:500;color:var(--muted);margin:0 0 28px;max-width:820px;}
+  .slide--dark h2.sub{color:rgba(255,255,255,.72);}
+  .muted{color:var(--muted);}
+  .accent{color:var(--accent);}
+  .body-copy{font-size:15px;line-height:1.55;}
+
+  /* footer / chrome */
+  .foot{
+    position:absolute;left:88px;right:88px;bottom:26px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-size:11px;color:var(--muted);letter-spacing:.04em;
+    border-top:1px solid var(--line);padding-top:12px;
+  }
+  .slide--dark .foot{border-top-color:rgba(255,255,255,.18);color:rgba(255,255,255,.55);}
+  .foot .mark{font-weight:800;letter-spacing:.06em;color:var(--navy);}
+  .slide--dark .foot .mark{color:#fff;}
+  .foot .pageno{font-variant-numeric:tabular-nums;}
+
+  /* generic layout helpers */
+  .content{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .grid{display:grid;gap:16px;}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  .grid-3{grid-template-columns:repeat(3,1fr);}
+  .grid-4{grid-template-columns:repeat(4,1fr);}
+  .grid-5{grid-template-columns:repeat(5,1fr);}
+
+  .card{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;box-shadow:var(--shadow);
+  }
+  .card h3{margin:0 0 6px;font-size:15px;font-weight:700;color:var(--navy);}
+  .card p{margin:0;font-size:12.5px;line-height:1.5;color:var(--muted);}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    padding:3px 9px;border-radius:100px;
+  }
+  .badge-ok{background:var(--ok-bg);color:var(--ok);}
+  .badge-dev{background:var(--dev-bg);color:var(--dev);}
+  .badge-miss{background:var(--miss-bg);color:var(--miss);}
+  .badge-now{background:var(--navy);color:#fff;}
+  .badge-next{background:#E3E9F0;color:var(--navy-2);}
+  .badge-later{background:#EFEBE2;color:var(--muted);}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+  .dot-ok{background:var(--ok);} .dot-dev{background:var(--dev);} .dot-miss{background:var(--miss);}
+
+  .meter{display:flex;gap:3px;}
+  .meter i{width:16px;height:6px;border-radius:3px;background:#E3DFD3;display:block;}
+  .meter i.on{background:var(--navy);}
+  .meter.profit i.on{background:var(--accent);}
+
+  blockquote.q{
+    margin:0;padding:12px 0 12px 18px;border-left:3px solid var(--accent);
+    font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:15.5px;line-height:1.5;color:var(--navy);
+  }
+  blockquote.q cite{display:block;margin-top:6px;font-family:"Inter";font-style:normal;font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;}
+
+  .tag-flag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;
+    color:#8A6A1E;background:#FBF1DA;border:1px dashed #D7B45E;border-radius:6px;padding:2px 7px;
+  }
+
+  /* nav controls (hidden in print) */
+  .nav{
+    position:fixed;right:22px;bottom:22px;display:flex;align-items:center;justify-content:flex-end;gap:8px;z-index:50;
+  }
+  .nav button{
+    background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18);
+    width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;
+    display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);
+  }
+  .nav button:hover{background:rgba(255,255,255,.16);}
+  .nav .counter{
+    color:#fff;font-size:12px;align-self:center;padding:0 10px;font-variant-numeric:tabular-nums;opacity:.75;
+  }
+  .nav .printbtn{width:auto;border-radius:18px;padding:0 14px;font-size:12px;font-weight:600;gap:6px;}
+  .hint{
+    position:fixed;top:16px;right:20px;color:rgba(255,255,255,.45);font-size:11px;z-index:50;
+    font-family:"Inter";letter-spacing:.02em;
+  }
+
+  @media print{
+    body{background:#fff;}
+    .nav,.hint{display:none !important;}
+    .stage{display:block;width:auto;height:auto;overflow:visible;}
+    .slide{
+      display:flex !important;
+      width:100vw;height:100vh;
+      page-break-after:always;
+      box-shadow:none;
+    }
+    .slide:last-child{ page-break-after:auto; }
+    @page{ size: landscape; margin:0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hint">← → of spatie om te navigeren</div>
+
+<div class="stage" id="stage">
+
+  <!-- 1. TITEL -->
+  <section class="slide slide--dark active">
+    <div class="content" style="justify-content:center;">
+      <div class="kicker">Directie- &amp; MT-besluitvorming</div>
+      <h1 class="title" style="font-size:56px;max-width:900px;">B2B-groeiplan Strevon</h1>
+      <h2 class="sub" style="font-size:20px;max-width:640px;">Van kapstok naar structuur: wat we nu doen om zij-instroomklanten sneller en voorspelbaarder te winnen.</h2>
+      <div style="display:flex;gap:36px;margin-top:36px;">
+        <div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px;">Klant</div><div style="font-size:17px;font-weight:700;">Strevon</div></div>
+        <div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px;">Periode</div><div style="font-size:17px;font-weight:700;">Q4 2026 · 90 dagen</div></div>
+        <div><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:4px;">Bron</div><div style="font-size:17px;font-weight:700;">Bryfr-analyse, 03-09-2026</div></div>
+      </div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Vertrouwelijk — alleen voor directie/MT</span><span class="pageno">01 / 14</span></div>
+  </section>
+
+  <!-- 2. MANAGEMENTSAMENVATTING -->
+  <section class="slide">
+    <div class="kicker">Managementsamenvatting</div>
+    <h1 class="title">Sales werkt. Marketing ondersteunt nog niet mee.</h1>
+    <h2 class="sub">Vier constateringen die de rest van dit deck onderbouwen.</h2>
+    <div class="content grid grid-2" style="gap:18px;">
+      <div class="card"><span class="badge badge-miss">Feit</span><h3 style="margin-top:10px;">Koude sales draagt het B2B-kanaal alleen</h3><p>Job belt zelf klanten koud, geeft de presentatie en overtuigt persoonlijk. Er is vrijwel geen marketingondersteuning: geen website, geen onderbouwing, geen structuur.</p></div>
+      <div class="card"><span class="badge badge-miss">Lek</span><h3 style="margin-top:10px;">Het lek zit vóór het gesprek</h3><p>Warme leads bekijken de site vóór ze bellen — en vinden daar niets overtuigends. Job moet alles wat de site had kunnen wegnemen, alsnog mondeling doen.</p></div>
+      <div class="card"><span class="badge badge-ok">Kans</span><h3 style="margin-top:10px;">Referral is het sterkste kanaal — en wordt genegeerd</h3><p>Doorverwijzingen van tevreden klanten converteren bijna altijd. Er wordt nooit actief om gevraagd.</p></div>
+      <div class="card"><span class="badge badge-now">Besluit</span><h3 style="margin-top:10px;">Vijf werkpakketten (A–E) dit kwartaal</h3><p>Klein qua bouwwerk, groot qua verwacht effect. Randvoorwaarde: eerst intern budget en koers bepalen — dat gesprek staat nu nog niet gepland.</p></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Managementsamenvatting</span><span class="pageno">02 / 14</span></div>
+  </section>
+
+  <!-- 3. HUIDIGE COMMERCIELE WERKELIJKHEID -->
+  <section class="slide">
+    <div class="kicker">1 — Waar staan we nu</div>
+    <h1 class="title">Twee manieren om klanten te winnen. Eén ervan doet al het werk.</h1>
+    <h2 class="sub">Hoe komen B2B-klanten op dit moment binnen bij Strevon?</h2>
+    <div class="content grid grid-2" style="gap:20px;">
+      <div class="card" style="border-top:4px solid var(--navy);">
+        <span class="badge badge-now">~90% van de instroom</span>
+        <h3 style="margin-top:10px;font-size:17px;">Koude acquisitie — volledig handmatig</h3>
+        <p style="font-size:13px;">Job zoekt bedrijven via Google en branchegidsen (Techniek Nederland, Elektronet), belt koud, geeft fysiek een presentatie. Alle overtuigingswerk gebeurt mondeling in dat ene gesprek — bezwaren worden pas dán weggenomen.</p>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted);">Tijdsintensief · geen schaalbaarheid zonder extra capaciteit · bottleneck voor groei.</div>
+      </div>
+      <div class="card" style="border-top:4px solid var(--accent);">
+        <span class="badge badge-ok">~100% conversie</span>
+        <h3 style="margin-top:10px;font-size:17px;">Warme instroom — via tevreden klanten</h3>
+        <p style="font-size:13px;">Bedrijven horen van Strevon via een andere klant en vragen zelf informatie op. Vertrouwen ligt er al; Job hoeft nauwelijks te overtuigen.</p>
+        <blockquote class="q" style="font-size:13px;margin-top:10px;">"Bij iemand die via een tevreden klant komt, heb je vaak een 100% score dat ze ook gaan samenwerken."<cite>Job Bruinsma, Strevon</cite></blockquote>
+        <div style="margin-top:8px;font-size:12px;color:var(--miss);font-weight:600;">Maar: dit kanaal is volledig passief — er wordt niet om gevraagd.</div>
+      </div>
+    </div>
+    <div style="margin-top:6px;">
+      <div style="font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.03em;text-transform:uppercase;margin-bottom:8px;">Wat al aantoonbaar werkt</div>
+      <div class="grid grid-3" style="gap:14px;">
+        <div class="card" style="padding:14px 16px;"><p style="font-size:12.5px;color:var(--ink);"><b>Koude sales converteert.</b> De motor draait, ook zonder marketing.</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:12.5px;color:var(--ink);"><b>Mailfunnel opgestart.</b> Elke 3 weken naar elektro-/beveiligingsbedrijven, 3 mails onderweg, aantoonbaar effect.</p></div>
+        <div class="card" style="padding:14px 16px;"><p style="font-size:12.5px;color:var(--ink);"><b>LinkedIn persoonlijk (Job).</b> Wekelijkse posts — "zij-instroom is Job" begint te landen in de branche.</p></div>
+      </div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Huidige commerciële werkelijkheid</span><span class="pageno">03 / 14</span></div>
+  </section>
+
+  <!-- 4. KLANTREIS OP HOOFDLIJNEN -->
+  <section class="slide">
+    <div class="kicker">2 — Waar lekt waarde weg</div>
+    <h1 class="title">De klantreis: van 950 naar 50 per maand</h1>
+    <h2 class="sub">Vijf fases, huidige status per contactmoment, en het volumeverloop erdoorheen.</h2>
+    <div class="grid grid-5" style="gap:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Prospect</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Koud prospecteren</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;border:1px dashed var(--miss);"><span class="dot dot-miss"></span> Website bedrijvenpagina</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> LinkedIn (persoonlijk)</div>
+        <div class="card" style="padding:10px 12px;border:1px dashed var(--dev);"><span class="dot dot-dev"></span> LinkedIn (bedrijf)</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">MQL</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Eerste salesgesprek</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Opvolging</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;border:1px dashed var(--dev);"><span class="dot dot-dev"></span> Mailfunnel B2B</div>
+        <div class="card" style="padding:10px 12px;border:1px dashed var(--dev);"><span class="dot dot-dev"></span> Nurture niet-besliste bedrijven</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">SQL</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Beslissing / akkoord</div>
+        <div class="card" style="padding:10px 12px;"><span class="dot dot-ok"></span> Onboarding klant</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Klant</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Matching &amp; meeloopdag</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Begeleiding traject</div>
+        <div class="card" style="padding:10px 12px;"><span class="dot dot-ok"></span> Contractmoment (taart)</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Loyaliteit</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;"><span class="dot dot-ok"></span> Kwartaalevaluatie</div>
+        <div class="card" style="padding:10px 12px;margin-bottom:8px;border:1px dashed var(--miss);"><span class="dot dot-miss"></span> Referral</div>
+        <div class="card" style="padding:10px 12px;border:1px dashed var(--miss);"><span class="dot dot-miss"></span> Review-verzameling</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;flex:1;display:flex;flex-direction:column;justify-content:center;">
+      <div style="display:flex;align-items:flex-end;gap:6px;height:64px;">
+        <div style="width:38%;background:var(--navy);height:100%;border-radius:6px 0 0 6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;">950</div>
+        <div style="width:14%;background:var(--navy-2);height:78%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:14px;">340</div>
+        <div style="width:5%;background:#5B7897;height:52%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:11px;">95</div>
+        <div style="width:3%;background:#93A9BE;height:36%;border-radius:0 6px 6px 0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:10px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:var(--muted);max-width:560px;">
+        <span>Koud bereikt / maand</span><span>Salesgesprek</span><span>Beslissing</span><span>Onboarding (50)</span>
+      </div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Klantreis op hoofdlijnen · maandcijfers</span><span class="pageno">04 / 14</span></div>
+  </section>
+
+  <!-- 5. LEKKAGES -->
+  <section class="slide">
+    <div class="kicker">2 — Waar lekt waarde weg</div>
+    <h1 class="title">Vijf plekken waar commerciële waarde weglekt</h1>
+    <h2 class="sub">Geen volledige lijst — de vijf met het grootste effect.</h2>
+    <div class="content grid grid-2" style="gap:14px;">
+      <div class="card"><span class="badge badge-miss">01 · Prospect</span><h3 style="margin-top:8px;">Website overtuigt niet</h3><p>Warme leads kijken op de site vóór ze bellen en vinden niets. De salespresentatie doet het werk dat de website zou moeten doen.</p></div>
+      <div class="card"><span class="badge badge-miss">02 · Prospect</span><h3 style="margin-top:8px;">Geen externe ROI-onderbouwing</h3><p>Klanten rekenen het tarief (€120k / 1,5 jaar) negatief door omdat de opbrengst nergens staat. De rekensom zit alleen in Job's hoofd.</p></div>
+      <div class="card"><span class="badge badge-miss">03 · Loyaliteit</span><h3 style="margin-top:8px;">Referral wordt niet gevraagd</h3><p>~100% conversie op doorverwijzingen — het meest onderbenutte kanaal van Strevon, en volledig passief.</p></div>
+      <div class="card"><span class="badge badge-miss">04 · Loyaliteit</span><h3 style="margin-top:8px;">Geen systematische review-opbouw</h3><p>Succesverhalen bestaan wel, maar komen niet structureel tot stand na een contractmoment.</p></div>
+      <div class="card" style="grid-column:span 2;background:#FBF1DA;border-color:#E7CE93;"><span class="badge badge-dev">05 · Randvoorwaarde</span><h3 style="margin-top:8px;">Geen intern B2B-budget of koers</h3><p style="color:#5B4109;">Zonder besluit over budget en prioriteit blijft B2B afhankelijk van Job's persoonlijke capaciteit en schuift de aanpak steeds door naar "later". Dit blokkeert alle andere fixes.</p></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Belangrijkste lekkages</span><span class="pageno">05 / 14</span></div>
+  </section>
+
+  <!-- 6. BELANGRIJKSTE KANSEN -->
+  <section class="slide">
+    <div class="kicker">3 — Welke kansen zijn het meest waardevol</div>
+    <h1 class="title">De vijf kansen met het grootste verwachte effect</h1>
+    <h2 class="sub">Impact = 💪-score uit Bryfr · Waarde = ⭐-score uit Bryfr, beide op basis van de klantreisanalyse.</h2>
+    <div class="content" style="display:flex;flex-direction:column;gap:9px;">
+      <div class="card" style="display:grid;grid-template-columns:110px 1fr 130px 90px;align-items:center;gap:14px;padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Prospect</div>
+        <div><b style="font-size:13.5px;">B2B-bedrijvenpagina + businesscase</b><div class="body-copy" style="color:var(--muted);font-size:12px;">Eén pagina die de bezwaren al wegneemt vóórdat Job belt.</div></div>
+        <div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="meter profit"><i class="on"></i><i class="on"></i><i></i></div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:110px 1fr 130px 90px;align-items:center;gap:14px;padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Loyaliteit</div>
+        <div><b style="font-size:13.5px;">Referral structureel maken</b><div class="body-copy" style="color:var(--muted);font-size:12px;">Vaste vraag bij kwartaalevaluatie + "introduceer ons"-kaartje.</div></div>
+        <div class="meter"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="meter profit"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:110px 1fr 130px 90px;align-items:center;gap:14px;padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Klant</div>
+        <div><b style="font-size:13.5px;">Contractmoment activeren voor review/referral</b><div class="body-copy" style="color:var(--muted);font-size:12px;">Emotioneel hoogtepunt (taart + oorkonde) nu ongebruikt als vraagmoment.</div></div>
+        <div class="meter"><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="meter profit"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:110px 1fr 130px 90px;align-items:center;gap:14px;padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">MQL</div>
+        <div><b style="font-size:13.5px;">Mailfunnel afmaken en segmenteren</b><div class="body-copy" style="color:var(--muted);font-size:12px;">Basis staat (3 mails); cadans en tag "warm maar nog niet klaar" ontbreken.</div></div>
+        <div class="meter"><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="meter profit"><i class="on"></i><i class="on"></i><i></i></div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:110px 1fr 130px 90px;align-items:center;gap:14px;padding:12px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;">Prospect</div>
+        <div><b style="font-size:13.5px;">LinkedIn-bedrijfspagina + referentieverhalen</b><div class="body-copy" style="color:var(--muted);font-size:12px;">Job's persoonlijke profiel werkt al; succesverhalen van bekende branchegenoten zijn het sterkste bewijs.</div></div>
+        <div class="meter"><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="meter profit"><i class="on"></i><i class="on"></i><i></i></div>
+      </div>
+      <div style="display:grid;grid-template-columns:110px 1fr 130px 90px;gap:14px;padding:0 18px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><div></div><div></div><div>Impact</div><div>Waarde</div></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Belangrijkste kansen</span><span class="pageno">06 / 14</span></div>
+  </section>
+
+  <!-- 7. PRIORITEITENRADAR -->
+  <section class="slide">
+    <div class="kicker">3 — Welke kansen zijn het meest waardevol</div>
+    <h1 class="title">Prioriteitenradar: NOW / NEXT / LATER</h1>
+    <h2 class="sub">Goede ideeën die dit kwartaal bewust niet worden opgepakt — met reden.</h2>
+    <div class="content grid grid-3" style="gap:16px;">
+      <div class="card" style="border-top:4px solid var(--navy);">
+        <span class="badge badge-now">Now — dit kwartaal</span>
+        <ul style="margin:12px 0 0;padding-left:16px;font-size:12.5px;line-height:1.7;">
+          <li><b>A</b> — Website + businesscase</li>
+          <li><b>B</b> — Referral- &amp; reviewmachine</li>
+          <li><b>C</b> — Mailfunnel afmaken</li>
+          <li><b>D</b> — LinkedIn + referenties</li>
+          <li><b>E</b> — B2B-koers bepalen (intern)</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:4px solid var(--navy-2);">
+        <span class="badge badge-next">Next — na dit kwartaal</span>
+        <ul style="margin:12px 0 0;padding-left:16px;font-size:12.5px;line-height:1.7;">
+          <li>CRM/Mailblue verder professionaliseren (segmentatie, opvolgcadans)</li>
+          <li>ROI-positionering verdiepen buiten businesscase (sales­training, advertenties)</li>
+          <li>Klantevent voorbereiden</li>
+        </ul>
+        <p style="margin-top:10px;font-size:11.5px;">Pas zinvol zodra de basis (NOW) staat.</p>
+      </div>
+      <div class="card" style="border-top:4px solid var(--muted);">
+        <span class="badge badge-later">Later — bewust nog niet</span>
+        <ul style="margin:12px 0 0;padding-left:16px;font-size:12.5px;line-height:1.7;">
+          <li>Segmentspecifieke aanpak elektro vs. installatietechniek</li>
+        </ul>
+        <blockquote class="q" style="font-size:12px;margin-top:12px;">"Nu nog te vroeg — relevant zodra de B2B-funnel staat."</blockquote>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;background:#FBF1DA;border-color:#E7CE93;">
+      <p style="color:#5B4109;font-size:12.5px;"><b>Waarom niet het klantevent, ondanks dat het goed voelt?</b> "Doe eerst de referral- en review-activering voordat je capaciteit stopt in een event." — lager bewijsniveau, hogere inspanning, moeilijker meetbaar op korte termijn.</p>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Prioriteitenradar</span><span class="pageno">07 / 14</span></div>
+  </section>
+
+  <!-- 8. NOW-PRIORITEITEN -->
+  <section class="slide">
+    <div class="kicker">4 — Wat moet dit kwartaal gebeuren</div>
+    <h1 class="title">Vijf werkpakketten, dit kwartaal</h1>
+    <h2 class="sub">Elk pakket: het probleem, waarom nu, verwacht effect, belangrijkste deliverable.</h2>
+    <div class="content grid grid-2" style="gap:12px;">
+      <div class="card"><span class="badge badge-now">A</span><h3 style="margin-top:8px;">B2B-website + businesscase</h3><p><b>Kans:</b> site neemt bezwaren nog niet weg. <b>Waarom nu:</b> content en bezwaren zijn al bekend bij Job. <b>Effect:</b> minder overtuigwerk aan de telefoon. <b>Deliverable:</b> 1 pagina + ROI-één-pager.</p></div>
+      <div class="card"><span class="badge badge-now">B</span><h3 style="margin-top:8px;">Referral- &amp; reviewmachine</h3><p><b>Kans:</b> ~100% conversie-kanaal wordt niet gebruikt. <b>Waarom nu:</b> laagste inspanning, hoogste bewezen waarde. <b>Effect:</b> voorspelbare nieuwe instroom. <b>Deliverable:</b> vaste vraag + kaartje bij contractmoment en kwartaalevaluatie.</p></div>
+      <div class="card"><span class="badge badge-now">C</span><h3 style="margin-top:8px;">Mailfunnel afmaken</h3><p><b>Kans:</b> funnel draait, mist cadans/segmentatie. <b>Waarom nu:</b> basis staat al, drie mails bewezen effect. <b>Effect:</b> warme leads blijven warm tot ze klaar zijn. <b>Deliverable:</b> volgende 3 mails + tagging in Mailblue.</p></div>
+      <div class="card"><span class="badge badge-now">D</span><h3 style="margin-top:8px;">LinkedIn + referentieverhalen</h3><p><b>Kans:</b> bedrijfspagina ontbreekt, verhalen staan nergens gebundeld. <b>Waarom nu:</b> persoonlijk kanaal van Job werkt al aantoonbaar. <b>Effect:</b> geloofwaardigheid bij doorzoekende leads. <b>Deliverable:</b> bedrijfspagina + eerste referentieverhaal.</p></div>
+      <div class="card" style="grid-column:span 2;"><span class="badge badge-now">E</span><h3 style="margin-top:8px;">B2B-koers bepalen (intern)</h3><p><b>Kans:</b> geen budget/richting vastgesteld — Jurian schuift B2B door naar "later". <b>Waarom nu:</b> randvoorwaarde voor A t/m D. <b>Effect:</b> knoop door, uitvoering kan starten. <b>Deliverable:</b> besluit budget + volgorde, sessie Job + Jurian (1,5 uur).</p></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>NOW-prioriteiten</span><span class="pageno">08 / 14</span></div>
+  </section>
+
+  <!-- 9. 90-DAGENPLAN -->
+  <section class="slide">
+    <div class="kicker">4 — Wat moet dit kwartaal gebeuren</div>
+    <h1 class="title">90-dagenplan</h1>
+    <h2 class="sub">Dagen 1–30 rechtstreeks uit de Bryfr-analyse. Dagen 31–90: voorstel op basis van prioriteit — <span class="tag-flag">nog af te stemmen</span> in het E-budgetgesprek.</h2>
+    <div class="content grid grid-3" style="gap:14px;">
+      <div class="card" style="border-top:4px solid var(--navy);">
+        <div style="font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;">Dagen 1–30</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Fundament</div>
+        <ul style="margin:0;padding-left:16px;font-size:12px;line-height:1.65;">
+          <li><b>Week 1</b> — Budgetgesprek Job + Jurian (E)</li>
+          <li><b>Week 2</b> — Bezwarensessie met Job (1u)</li>
+          <li><b>Week 3</b> — Website + businesscase v1 online (A)</li>
+          <li><b>Week 4</b> — LinkedIn-bedrijfspagina + volgende 3 mails (C, D)</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:4px solid var(--navy-2);">
+        <div style="font-size:11px;font-weight:800;color:var(--navy-2);text-transform:uppercase;">Dagen 31–60 <span class="tag-flag">voorstel</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Uitrollen &amp; leren</div>
+        <ul style="margin:0;padding-left:16px;font-size:12px;line-height:1.65;">
+          <li>Referral- &amp; reviewmachine live (B): kaartje + vraag in kwartaalevaluatie</li>
+          <li>Eerste referentieverhaal (video) opnemen bij bestaande klant</li>
+          <li>Mailfunnel-segmentatie testen: tag "warm, nog niet klaar"</li>
+          <li>Website reviewen op basis van eerste salesgesprekken</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:4px solid var(--muted);">
+        <div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;">Dagen 61–90 <span class="tag-flag">voorstel</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">Verbeteren &amp; borgen</div>
+        <ul style="margin:0;padding-left:16px;font-size:12px;line-height:1.65;">
+          <li>Kwartaalevaluatie-format vastleggen als vast proces (5 vragen incl. referral)</li>
+          <li>Resultaten tegen KPI-doelen leggen, bijsturen wat niet werkt</li>
+          <li>Volgend kwartaal opnieuw prioriteren (NOW/NEXT/LATER herzien)</li>
+          <li>Besluit NEXT-items: CRM-verdieping, klantevent</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>90-dagen kwartaalplan</span><span class="pageno">09 / 14</span></div>
+  </section>
+
+  <!-- 10. ASSETS / WERKPAKKETTEN -->
+  <section class="slide">
+    <div class="kicker">7 — Hoe ziet uitvoering eruit</div>
+    <h1 class="title">Wat er concreet gemaakt moet worden</h1>
+    <h2 class="sub">Per werkpakket, gegroepeerd naar deliverable.</h2>
+    <div class="content grid grid-2" style="gap:10px;">
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">A —</b> <span style="font-size:12.5px;">B2B-bedrijvenpagina (probleem → oplossing → ROI → referentie → formulier)</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">A —</b> <span style="font-size:12.5px;">ROI-één-pager met 3 rekenvoorbeelden (kostprijs vs. opbrengst jaar 1–2)</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">B —</b> <span style="font-size:12.5px;">"Introduceer ons"-kaartje voor tevreden klanten</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">B —</b> <span style="font-size:12.5px;">Kaartje bij oorkonde met referral-vraag</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">B —</b> <span style="font-size:12.5px;">Reviewverzoek-mail: Google-review óf videoverhaal</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">B —</b> <span style="font-size:12.5px;">Vaste vragenlijst kwartaalevaluatie (5 vragen incl. referral)</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">C —</b> <span style="font-size:12.5px;">Volgende 3 mails in de funnel, op basis van bezwaren</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">C —</b> <span style="font-size:12.5px;">Nurture-reeks (3 mails) voor "niet klaar, wel geïnteresseerd"</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">D —</b> <span style="font-size:12.5px;">LinkedIn-bedrijfspagina: profiel + eerste 3 posts hergedeeld</span></div>
+      <div class="card" style="padding:14px 18px;"><b style="font-size:12.5px;color:var(--navy);">D —</b> <span style="font-size:12.5px;">Begeleidingsstructuur gedocumenteerd als verkoopargument</span></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Benodigde assets / werkpakketten</span><span class="pageno">10 / 14</span></div>
+  </section>
+
+  <!-- 11. MARKETING OPERATING SYSTEM -->
+  <section class="slide">
+    <div class="kicker">7 — Hoe ziet uitvoering eruit</div>
+    <h1 class="title">Het ritme na dit kwartaal</h1>
+    <h2 class="sub">Wat structureel moet blijven draaien, ook ná de eerste 90 dagen.</h2>
+    <div class="content" style="display:flex;flex-direction:column;gap:8px;">
+      <div class="grid" style="grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.04em;padding:0 4px;">
+        <div>Ritme</div><div>Wat</div><div>Eigenaar</div><div>Frequentie</div>
+      </div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;"><b>Klantevaluatie</b><span>Vaste vragenlijst incl. referral-vraag en signalen voor uitbreiding</span><span>Benjamin</span><span>Elk kwartaal</span></div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;"><b>Content &amp; cases</b><span>Mailfunnel elke 3 weken + LinkedIn wekelijks, gevoed door referentieverhalen</span><span>Job / Chantal</span><span>Doorlopend</span></div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;"><b>Salesfeedback</b><span>Bezwaren en signalen uit gesprekken terug naar website/mails</span><span>Job → Chantal</span><span>Doorlopend</span></div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;"><b>KPI's volgen</b><span>Volumes per touchpoint (H1–H16), maandelijks</span><span>Job / Jurian</span><span>Maandelijks</span></div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;"><b>Kwartaalprioritering</b><span>NOW/NEXT/LATER opnieuw bepalen op basis van resultaten</span><span>Job / Jurian</span><span>Elk kwartaal</span></div>
+      <div class="card" style="display:grid;grid-template-columns:1.1fr 2fr 1fr 1fr;gap:10px;align-items:center;padding:12px 16px;font-size:12.5px;background:#FBF1DA;border-color:#E7CE93;"><b>Campagne-evaluatie</b><span style="color:#5B4109;">Open-/klikcijfers e-mail nog niet gemeten <span class="tag-flag">nog te valideren</span></span><span>Chantal</span><span>—</span></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Marketing operating system</span><span class="pageno">11 / 14</span></div>
+  </section>
+
+  <!-- 12. BESLUITEN VOOR DIRECTIE/MT -->
+  <section class="slide slide--dark">
+    <div class="kicker">6 — Welke besluiten zijn nodig</div>
+    <h1 class="title">Wat we vandaag van jullie nodig hebben</h1>
+    <h2 class="sub">Vier concrete besluiten — geen open discussie, wel een knoop.</h2>
+    <div class="content grid grid-2" style="gap:14px;">
+      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);box-shadow:none;">
+        <h3 style="color:#fff;">1. Akkoord op werkpakketten A–E</h3>
+        <p style="color:rgba(255,255,255,.68);">Start van website, businesscase, referral-/reviewmachine, mailfunnel en LinkedIn dit kwartaal.</p>
+      </div>
+      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);box-shadow:none;">
+        <h3 style="color:#fff;">2. B2B-budget vaststellen</h3>
+        <p style="color:rgba(255,255,255,.68);">Job noemde in gesprek een indicatie van <b>±€10.000</b> voor komend kwartaal. <span class="tag-flag">nog te valideren</span> — definitief bedrag hoort thuis in het E-budgetgesprek.</p>
+      </div>
+      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);box-shadow:none;">
+        <h3 style="color:#fff;">3. Eigenaarschap bevestigen</h3>
+        <p style="color:rgba(255,255,255,.68);"><b>Job</b> — content &amp; sales-input · <b>Chantal</b> — copy &amp; uitvoering · <b>Jurian</b> — budget &amp; prioriteit · <b>Benjamin</b> — klantevaluatie &amp; referral.</p>
+      </div>
+      <div class="card" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);box-shadow:none;">
+        <h3 style="color:#fff;">4. Budgetgesprek Job + Jurian inplannen</h3>
+        <p style="color:rgba(255,255,255,.68);">1,5 uur, week 1 van het kwartaal. Zonder dit gesprek starten A–D niet.</p>
+      </div>
+    </div>
+    <div class="foot"><span class="mark" style="color:#fff;">STREVON</span><span>Besluiten voor directie/MT</span><span class="pageno">12 / 14</span></div>
+  </section>
+
+  <!-- 13. WAT WE BEWUST NIET DOEN -->
+  <section class="slide">
+    <div class="kicker">5 — Wat doen we bewust niet</div>
+    <h1 class="title">Bewust uitgesteld — niet vergeten</h1>
+    <h2 class="sub">Goede ideeën die dit kwartaal afleiden van wat het meeste oplevert.</h2>
+    <div class="content grid grid-3" style="gap:14px;">
+      <div class="card"><h3>Klantevent</h3><p style="font-size:12.5px;">Arbeidsintensief, effect moeilijk meetbaar op korte termijn.</p><blockquote class="q" style="font-size:12px;margin-top:10px;">"Doe eerst de referral- en review-activering voordat je capaciteit stopt in een event."</blockquote></div>
+      <div class="card"><h3>Segmentspecifieke aanpak</h3><p style="font-size:12.5px;">Aparte messaging voor elektro vs. installatietechniek.</p><blockquote class="q" style="font-size:12px;margin-top:10px;">"Nu nog te vroeg — relevant zodra de B2B-funnel staat."</blockquote></div>
+      <div class="card"><h3>Volledige CRM-herinrichting</h3><p style="font-size:12.5px;">Mailblue verder professionaliseren dan nodig voor werkpakket C. Eerst de basis, dan verdiepen.</p></div>
+    </div>
+    <div class="foot"><span class="mark">STREVON</span><span>Wat we bewust niet doen</span><span class="pageno">13 / 14</span></div>
+  </section>
+
+  <!-- 14. SUCCES NA 90 DAGEN -->
+  <section class="slide slide--dark">
+    <div class="kicker">Succes na 90 dagen</div>
+    <h1 class="title">Wat er dan anders is dan vandaag</h1>
+    <div class="content grid grid-2" style="gap:24px;">
+      <div>
+        <ul style="margin:0;padding-left:18px;font-size:14px;line-height:2;color:rgba(255,255,255,.9);">
+          <li>B2B-bedrijvenpagina + ROI-businesscase live, ingezet vóór elk salesgesprek</li>
+          <li>LinkedIn-bedrijfspagina live met eerste referentieverhalen</li>
+          <li>Referral-vraag structureel onderdeel van elke kwartaalevaluatie</li>
+          <li>Mailfunnel loopt met cadans en segmentatie op beslissingsstatus</li>
+          <li>B2B-budget en koers voor komend kwartaal vastgesteld</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px;">Doelvolumes / maand (Bryfr-model)</div>
+        <div class="grid" style="grid-template-columns:1.6fr .7fr .2fr .7fr;gap:8px;font-size:12.5px;">
+          <div style="color:rgba(255,255,255,.55);">Touchpoint</div><div style="color:rgba(255,255,255,.55);">Nu</div><div></div><div style="color:rgba(255,255,255,.55);">Doel</div>
+          <div>Koud prospecteren</div><div>950</div><div>→</div><div style="font-weight:700;">1.140</div>
+          <div>Website bezoek</div><div>750</div><div>→</div><div style="font-weight:700;">900</div>
+          <div>Salesgesprekken</div><div>340</div><div>→</div><div style="font-weight:700;">408</div>
+          <div>Beslissing/akkoord</div><div>95</div><div>→</div><div style="font-weight:700;">114</div>
+          <div>Onboarding</div><div>50</div><div>→</div><div style="font-weight:700;">60</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="mark" style="color:#fff;">STREVON</span><span>Succes na 90 dagen</span><span class="pageno">14 / 14</span></div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev" title="Vorige">‹</button>
+  <span class="counter" id="counter">1 / 14</span>
+  <button id="next" title="Volgende">›</button>
+  <button class="printbtn" id="printbtn" title="Exporteer naar PDF">⤓ PDF</button>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var idx = 0;
+  var stage = document.getElementById('stage');
+  var counter = document.getElementById('counter');
+
+  function layout(){
+    var s = Math.min(window.innerWidth/1280, window.innerHeight/720);
+    slides.forEach(function(sl){ sl.style.transform = 'scale('+s+')'; });
+  }
+  function show(i){
+    idx = Math.max(0, Math.min(slides.length-1, i));
+    slides.forEach(function(sl,n){ sl.classList.toggle('active', n===idx); });
+    counter.textContent = (idx+1)+' / '+slides.length;
+  }
+  document.getElementById('prev').addEventListener('click', function(){ show(idx-1); });
+  document.getElementById('next').addEventListener('click', function(){ show(idx+1); });
+  document.getElementById('printbtn').addEventListener('click', function(){ window.print(); });
+  window.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight' || e.key===' ') { show(idx+1); e.preventDefault(); }
+    if(e.key==='ArrowLeft') { show(idx-1); }
+  });
+  window.addEventListener('resize', layout);
+  window.addEventListener('hashchange', function(){
+    var n = parseInt(location.hash.replace('#',''),10);
+    if(!isNaN(n)) show(n-1);
+  });
+  layout();
+  var startHash = parseInt(location.hash.replace('#',''),10);
+  show(isNaN(startHash) ? 0 : startHash-1);
+})();
+</script>
+
+</body>
+</html>
